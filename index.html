@@ -1,11 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>TESTE-5</title>
+    <title>AR Models</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-    <button onclick="location.href='intent://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/1f167dff65048529183cd5a014792d2f3f44ba09/4OO8.glb#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https%3A%2F%2Fdevelopers.google.com%2Far;end;'">
-         TESTE-5 (Android)
-    </button>
+    <div class="container">
+        <h1>Select a Model to View</h1>
+        <div id="model-list"></div>
+    </div>
+
+    <script>
+        // List of models with their names and file URLs
+        const models = [
+            {
+                name: 'Cas9 (PDB 4OO8)',
+                url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/1f167dff65048529183cd5a014792d2f3f44ba09/4OO8.glb'
+            },
+            {
+                name: 'Model 2',
+                url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/main/model2.glb'
+            },
+            {
+                name: 'Model 3',
+                url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/main/model3.glb'
+            }
+            // Add more models as needed
+        ];
+
+        // Get the model list container
+        const modelList = document.getElementById('model-list');
+
+        // Generate a button for each model
+        models.forEach(model => {
+            const button = document.createElement('a');
+            button.className = 'button';
+            button.innerText = model.name;
+            button.href = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(model.url)}#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https%3A%2F%2Fdevelopers.google.com%2Far;end;`;
+            button.innerText += " (Android)";
+            modelList.appendChild(button);
+        });
+    </script>
 </body>
 </html>
