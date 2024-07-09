@@ -27,7 +27,14 @@
         .button:hover {
             background-color: #45a049;
         }
+        .ios-button {
+            background-color: #007AFF;
+        }
+        .ios-button:hover {
+            background-color: #005BBB;
+        }
     </style>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -56,14 +63,22 @@
         // Get the model list container
         const modelList = document.getElementById('model-list');
 
-        // Generate a button for each model
+        // Generate buttons for each model
         models.forEach(model => {
-            const button = document.createElement('a');
-            button.className = 'button';
-            button.innerText = model.name;
-            button.href = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(model.url)}#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https%3A%2F%2Fdevelopers.google.com%2Far;end;`;
-            button.innerText += " (Android)";
-            modelList.appendChild(button);
+            // Android button
+            const androidButton = document.createElement('a');
+            androidButton.className = 'button';
+            androidButton.innerText = model.name + " (Android)";
+            androidButton.href = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(model.url)}#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https%3A%2F%2Fdevelopers.google.com%2Far;end;`;
+            modelList.appendChild(androidButton);
+
+            // iOS button
+            const iosButton = document.createElement('a');
+            iosButton.className = 'button ios-button';
+            iosButton.innerText = model.name + " (iOS)";
+            iosButton.href = model.url; // Direct link for iOS, leveraging model-viewer capabilities
+            iosButton.target = '_blank';
+            modelList.appendChild(iosButton);
         });
     </script>
 </body>
