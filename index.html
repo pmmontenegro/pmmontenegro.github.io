@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AR Models</title>
+    <title>MBiotec - BMA (XREDUM)</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,34 +16,33 @@
             background-color: #3a3a3a;
             border-radius: 10px;
         }
-        .button {
-            display: block;
+        .dropdown {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
             background-color: #4CAF50;
             color: white;
-            text-align: center;
-            text-decoration: none;
+            border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
         }
-        .button:hover {
-            background-color: #45a049;
-        }
-        .ios-button {
-            background-color: #007AFF;
-        }
-        .ios-button:hover {
-            background-color: #005BBB;
+        .dropdown option {
+            background-color: #3a3a3a;
+            color: #e0e0e0;
         }
     </style>
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Select a Model to View</h1>
-        <div id="model-list"></div>
+        <h1>Mestrado em Biotecnologia</h1>
+        <h2>Biotecnologia Molecular Avançada</h2>
+        <h3>Select a Model to View</h3>
+        <select id="model-dropdown" class="dropdown">
+            <option value="">Select a model...</option>
+        </select>
+        <div id="model-viewer-container"></div>
     </div>
 
     <script>
@@ -64,37 +63,36 @@
             // Add more models as needed
         ];
 
-        // Get the model list container
-        const modelList = document.getElementById('model-list');
+        // Get the dropdown and container elements
+        const modelDropdown = document.getElementById('model-dropdown');
+        const modelViewerContainer = document.getElementById('model-viewer-container');
 
-        // Generate buttons for each model
+        // Populate the dropdown with models
         models.forEach(model => {
-            // Android button
-            const androidButton = document.createElement('a');
-            androidButton.className = 'button';
-            androidButton.innerText = model.name + " (Android)";
-            androidButton.href = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(model.url)}#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https%3A%2F%2Fdevelopers.google.com%2Far;end;`;
-            modelList.appendChild(androidButton);
+            const option = document.createElement('option');
+            option.value = model.url;
+            option.innerText = model.name;
+            modelDropdown.appendChild(option);
+        });
 
-            // iOS button
-            const iosButton = document.createElement('a');
-            iosButton.className = 'button ios-button';
-            iosButton.innerText = model.name + " (iOS)";
-            iosButton.href = "#";
-            iosButton.onclick = () => {
+        // Event listener for dropdown change
+        modelDropdown.addEventListener('change', (event) => {
+            const url = event.target.value;
+
+            // Clear existing model viewer if any
+            document.querySelectorAll('model-viewer').forEach(el => el.remove());
+
+            if (url) {
+                // Create and append the model viewer
                 const modelViewer = document.createElement('model-viewer');
-                modelViewer.src = model.url;
-                modelViewer.alt = model.name;
+                modelViewer.src = url;
+                modelViewer.alt = modelDropdown.options[modelDropdown.selectedIndex].text;
                 modelViewer.autoRotate = true;
                 modelViewer.cameraControls = true;
                 modelViewer.style.width = "100%";
                 modelViewer.style.height = "400px";
-                
-                // Clear existing model viewer if any
-                document.querySelectorAll('model-viewer').forEach(el => el.remove());
-                modelList.appendChild(modelViewer);
-            };
-            modelList.appendChild(iosButton);
+                modelViewerContainer.appendChild(modelViewer);
+            }
         });
     </script>
 </body>
