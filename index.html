@@ -43,19 +43,14 @@
         }
         #model-viewer-container {
             width: 100%;
-            height: calc(100vh - 200px);
+            height: calc(100vh - 200px); /* Adjusting height to fit the screen minus the header and dropdown */
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
         }
         model-viewer {
-            width: 50%;
+            width: 100%;
             height: 100%;
-            position: absolute;
-        }
-        #helix2 {
-            left: 50%;
         }
     </style>
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
@@ -72,65 +67,49 @@
     </div>
 
     <script>
-        // List of models
+        // List of models with their names and file URLs
         const models = [
-            { name: 'Cas9 (PDB 4OO8)', url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/1f167dff65048529183cd5a014792d2f3f44ba09/4OO8.glb' },
-            { name: 'Central Dogma', url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/304795ed1a66142934e0c2133a847aad5be979d8/central_dogma_project_-_example_model.glb' },
-            { name: 'Double Helix', url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/186016534bbd55af8d8dacf2b05d458fa87caccb/1D28.glb' },
             {
-                name: 'Antiparallel',
-                urls: [
-                    'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/blob/f043225d654bb94a9652517af3dfe74acb2db8e7/helix_1.glb',
-                    'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/blob/f043225d654bb94a9652517af3dfe74acb2db8e7/helix_2.glb'
-                ]
+                name: 'Cas9 (PDB 4OO8)',
+                url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/1f167dff65048529183cd5a014792d2f3f44ba09/4OO8.glb'
+            },
+            {
+                name: 'Central Dogma',
+                url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/304795ed1a66142934e0c2133a847aad5be979d8/central_dogma_project_-_example_model.glb'
+            },
+            {
+                name: 'Double Helix',
+                url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/186016534bbd55af8d8dacf2b05d458fa87caccb/1D28.glb'
             }
+            // Add more models as needed
         ];
 
+        // Get the dropdown and container elements
         const modelDropdown = document.getElementById('model-dropdown');
         const modelViewerContainer = document.getElementById('model-viewer-container');
 
-        // Populate dropdown
+        // Populate the dropdown with models
         models.forEach(model => {
             const option = document.createElement('option');
-            option.value = model.urls ? "Antiparallel" : model.url;
+            option.value = model.url;
             option.innerText = model.name;
             modelDropdown.appendChild(option);
         });
 
-        // Handle model selection
+        // Event listener for dropdown change
         modelDropdown.addEventListener('change', (event) => {
-            const selectedValue = event.target.value;
-            
-            // Clear previous models
+            const url = event.target.value;
+
+            // Clear existing model viewer if any
             document.querySelectorAll('model-viewer').forEach(el => el.remove());
 
-            if (selectedValue === "Antiparallel") {
-                // Load both helices for the "Antiparallel" mode
-                const urls = models.find(m => m.name === "Antiparallel").urls;
-                urls.forEach((url, index) => {
-                    const modelViewer = document.createElement('model-viewer');
-                    modelViewer.src = url;
-                    modelViewer.alt = `Helix ${index + 1}`;
-                    modelViewer.autoRotate = true;
-                    modelViewer.cameraControls = true;
-                    modelViewer.style.position = "absolute";
-                    modelViewer.style.width = "50%";
-                    modelViewer.style.height = "100%";
-                    modelViewer.setAttribute("scale", "1 1 1"); // Uniform scale
-                    if (index === 1) {
-                        modelViewer.style.left = "50%"; // Position second helix
-                        modelViewer.setAttribute("rotation", "0 180 0"); // Flip the second helix
-                    }
-                    modelViewerContainer.appendChild(modelViewer);
-                });
-            } else if (selectedValue) {
-                // Load a single model
+            if (url) {
+                // Create and append the model viewer
                 const modelViewer = document.createElement('model-viewer');
-                modelViewer.src = selectedValue;
+                modelViewer.src = url;
                 modelViewer.alt = modelDropdown.options[modelDropdown.selectedIndex].text;
                 modelViewer.autoRotate = true;
                 modelViewer.cameraControls = true;
-                modelViewer.setAttribute("scale", "0.5 0.5 0.5"); // Ensure same scale
                 modelViewerContainer.appendChild(modelViewer);
             }
         });
