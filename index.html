@@ -43,7 +43,7 @@
         }
         #model-viewer-container {
             width: 100%;
-            height: calc(100vh - 200px); /* Adjusting height to fit the screen minus the header and dropdown */
+            height: calc(100vh - 200px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -61,51 +61,50 @@
         <h2>Biotecnologia Molecular Avançada</h2>
         <h3>Select a Model to View</h3>
         <select id="model-dropdown" class="dropdown">
-            <option value="">Select a model...</option>
+            <option value="">Loading models...</option>
         </select>
         <div id="model-viewer-container"></div>
     </div>
 
     <script>
-        // List of models with their names and file URLs
-        const models = [
-            {
-                name: 'Cas9 (PDB 4OO8)',
-                url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/1f167dff65048529183cd5a014792d2f3f44ba09/4OO8.glb'
-            },
-            {
-                name: 'Central Dogma',
-                url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/304795ed1a66142934e0c2133a847aad5be979d8/central_dogma_project_-_example_model.glb'
-            },
-            {
-                name: 'Double Helix',
-                url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/186016534bbd55af8d8dacf2b05d458fa87caccb/1D28.glb'
+        const repoOwner = "pmmontenegro";
+        const repoName = "pmmontenegro.github.io";
+        const modelsFolder = ""; // Set the specific folder path inside the repo if needed
+
+        const githubApiUrl = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${modelsFolder}`;
+
+        const modelDropdown = document.getElementById("model-dropdown");
+        const modelViewerContainer = document.getElementById("model-viewer-container");
+
+        async function fetchModels() {
+            try {
+                const response = await fetch(githubApiUrl);
+                if (!response.ok) throw new Error("Failed to fetch models");
+
+                const files = await response.json();
+                modelDropdown.innerHTML = '<option value="">Select a model...</option>'; // Clear previous options
+
+                files.forEach(file => {
+                    if (file.name.endsWith(".glb")) {
+                        const option = document.createElement("option");
+                        option.value = file.download_url;
+                        option.innerText = file.name.replace(".glb", ""); // Remove .glb from display name
+                        modelDropdown.appendChild(option);
+                    }
+                });
+
+            } catch (error) {
+                console.error("Error fetching models:", error);
+                modelDropdown.innerHTML = '<option value="">Failed to load models</option>';
             }
-            // Add more models as needed
-        ];
+        }
 
-        // Get the dropdown and container elements
-        const modelDropdown = document.getElementById('model-dropdown');
-        const modelViewerContainer = document.getElementById('model-viewer-container');
-
-        // Populate the dropdown with models
-        models.forEach(model => {
-            const option = document.createElement('option');
-            option.value = model.url;
-            option.innerText = model.name;
-            modelDropdown.appendChild(option);
-        });
-
-        // Event listener for dropdown change
-        modelDropdown.addEventListener('change', (event) => {
+        modelDropdown.addEventListener("change", (event) => {
             const url = event.target.value;
-
-            // Clear existing model viewer if any
-            document.querySelectorAll('model-viewer').forEach(el => el.remove());
+            document.querySelectorAll("model-viewer").forEach(el => el.remove());
 
             if (url) {
-                // Create and append the model viewer
-                const modelViewer = document.createElement('model-viewer');
+                const modelViewer = document.createElement("model-viewer");
                 modelViewer.src = url;
                 modelViewer.alt = modelDropdown.options[modelDropdown.selectedIndex].text;
                 modelViewer.autoRotate = true;
@@ -113,6 +112,8 @@
                 modelViewerContainer.appendChild(modelViewer);
             }
         });
+
+        fetchModels(); // Call function to load models dynamically
     </script>
 </body>
 </html>
