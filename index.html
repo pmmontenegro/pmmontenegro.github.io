@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>MBiotec - BMA (XREDUM)</title>
+    <title>MBiotec - BMA (XREDUM) DNA Interaction</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -24,95 +24,48 @@
         }
         h1, h2, h3 {
             margin: 10px 0;
+            text-align: center;
         }
-        .dropdown {
-            width: 80%;
-            max-width: 300px;
-            padding: 10px;
-            margin: 10px 0;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .dropdown option {
-            background-color: #3a3a3a;
-            color: #e0e0e0;
-        }
-        #model-viewer-container {
+        .model-viewer-container {
             width: 100%;
-            height: calc(100vh - 200px); /* Adjusting height to fit the screen minus the header and dropdown */
+            height: 70vh; /* Adjusting height */
             display: flex;
-            justify-content: center;
+            justify-content: space-around; /* Arrange models side by side */
             align-items: center;
         }
         model-viewer {
-            width: 100%;
+            width: 45%;
             height: 100%;
         }
     </style>
+    <!-- Import Google Model Viewer -->
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Mestrado em Biotecnologia</h1>
-        <h2>Biotecnologia Molecular Avançada</h2>
-        <h3>Select a Model to View</h3>
-        <select id="model-dropdown" class="dropdown">
-            <option value="">Select a model...</option>
-        </select>
-        <div id="model-viewer-container"></div>
+        <h1>Molecular Biotechnology - DNA Interaction</h1>
+        <h2>Align and Rotate the DNA Helices</h2>
+        <h3>Use your touchscreen to rotate the helices and make them align in an antiparallel way.</h3>
+
+        <div class="model-viewer-container">
+            <!-- First DNA Helix -->
+            <model-viewer 
+                src="https://yourhosting.com/helix1.glb" 
+                alt="DNA Helix 1"
+                camera-controls
+                auto-rotate
+                ar>
+            </model-viewer>
+
+            <!-- Second DNA Helix -->
+            <model-viewer 
+                src="https://yourhosting.com/helix2.glb" 
+                alt="DNA Helix 2"
+                camera-controls
+                auto-rotate
+                ar>
+            </model-viewer>
+        </div>
     </div>
-
-    <script>
-        // List of models with their names and file URLs
-        const models = [
-            {
-                name: 'Cas9 (PDB 4OO8)',
-                url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/1f167dff65048529183cd5a014792d2f3f44ba09/4OO8.glb'
-            },
-            {
-                name: 'Central Dogma',
-                url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/304795ed1a66142934e0c2133a847aad5be979d8/central_dogma_project_-_example_model.glb'
-            },
-            {
-                name: 'Double Helix',
-                url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/186016534bbd55af8d8dacf2b05d458fa87caccb/1D28.glb'
-            }
-            // Add more models as needed
-        ];
-
-        // Get the dropdown and container elements
-        const modelDropdown = document.getElementById('model-dropdown');
-        const modelViewerContainer = document.getElementById('model-viewer-container');
-
-        // Populate the dropdown with models
-        models.forEach(model => {
-            const option = document.createElement('option');
-            option.value = model.url;
-            option.innerText = model.name;
-            modelDropdown.appendChild(option);
-        });
-
-        // Event listener for dropdown change
-        modelDropdown.addEventListener('change', (event) => {
-            const url = event.target.value;
-
-            // Clear existing model viewer if any
-            document.querySelectorAll('model-viewer').forEach(el => el.remove());
-
-            if (url) {
-                // Create and append the model viewer
-                const modelViewer = document.createElement('model-viewer');
-                modelViewer.src = url;
-                modelViewer.alt = modelDropdown.options[modelDropdown.selectedIndex].text;
-                modelViewer.autoRotate = true;
-                modelViewer.cameraControls = true;
-                modelViewerContainer.appendChild(modelViewer);
-            }
-        });
-    </script>
 </body>
 </html>
