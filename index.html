@@ -50,9 +50,12 @@
             position: relative;
         }
         model-viewer {
-            width: 100%;
+            width: 50%;
             height: 100%;
             position: absolute;
+        }
+        #helix2 {
+            transform: rotateY(180deg); /* Pre-align one helix antiparallel */
         }
     </style>
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
@@ -85,7 +88,10 @@
             },
             {
                 name: 'Antiparallel',
-                url: 'antiparallel' // Special case to load two helices
+                urls: [
+                    'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/5968c7f464a4e155e5dbcd1376458fb573756a96/helix_1.glb',
+                    'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/5968c7f464a4e155e5dbcd1376458fb573756a96/helix_2.glb'
+                ]
             }
         ];
 
@@ -96,7 +102,7 @@
         // Populate the dropdown with models
         models.forEach(model => {
             const option = document.createElement('option');
-            option.value = model.url;
+            option.value = model.urls ? JSON.stringify(model.urls) : model.url;
             option.innerText = model.name;
             modelDropdown.appendChild(option);
         });
@@ -105,35 +111,42 @@
         modelDropdown.addEventListener('change', (event) => {
             const selectedValue = event.target.value;
 
-            // Clear existing models
+            // Clear existing model viewer elements
             document.querySelectorAll('model-viewer').forEach(el => el.remove());
 
-            if (selectedValue === "antiparallel") {
-                // Add two helices for the antiparallel demonstration
-                const helix1 = document.createElement('model-viewer');
-                helix1.src = "https://example.com/helix1.glb"; // Replace with your actual model URL
-                helix1.alt = "Helix 1";
-                helix1.autoRotate = false;
-                helix1.cameraControls = true;
-                helix1.style.transform = "translateX(-20px)"; // Offset to the left
-
-                const helix2 = document.createElement('model-viewer');
-                helix2.src = "https://example.com/helix2.glb"; // Replace with your actual model URL
-                helix2.alt = "Helix 2";
-                helix2.autoRotate = false;
-                helix2.cameraControls = true;
-                helix2.style.transform = "translateX(20px) rotateY(180deg)"; // Offset to the right & rotated
-
-                modelViewerContainer.appendChild(helix1);
-                modelViewerContainer.appendChild(helix2);
-            } else if (selectedValue) {
-                // Add a single model-viewer element for normal cases
-                const modelViewer = document.createElement('model-viewer');
-                modelViewer.src = selectedValue;
-                modelViewer.alt = modelDropdown.options[modelDropdown.selectedIndex].text;
-                modelViewer.autoRotate = true;
-                modelViewer.cameraControls = true;
-                modelViewerContainer.appendChild(modelViewer);
+            if (selectedValue) {
+                try {
+                    const urls = JSON.parse(selectedValue); // Try parsing multiple URLs
+                    if (Array.isArray(urls)) {
+                        // If "Antiparallel" is selected, add both helices
+                        urls.forEach((url, index) => {
+                            const modelViewer = document.createElement('model-viewer');
+                            modelViewer.src = url;
+                            modelViewer.alt = `Helix ${index + 1}`;
+                            modelViewer.autoRotate = true;
+                            modelViewer.cameraControls = true;
+                            modelViewer.id = index === 1 ? "helix2" : "helix1"; // Set ID to differentiate
+                            modelViewer.style.left = index === 1 ? "50%" : "0"; // Position helices side-by-side
+                            modelViewerContainer.appendChild(modelViewer);
+                        });
+                    } else {
+                        // If a single model is selected
+                        const modelViewer = document.createElement('model-viewer');
+                        modelViewer.src = selectedValue;
+                        modelViewer.alt = modelDropdown.options[modelDropdown.selectedIndex].text;
+                        modelViewer.autoRotate = true;
+                        modelViewer.cameraControls = true;
+                        modelViewerContainer.appendChild(modelViewer);
+                    }
+                } catch (e) {
+                    // If JSON parsing fails (i.e., for single models), just load one model
+                    const modelViewer = document.createElement('model-viewer');
+                    modelViewer.src = selectedValue;
+                    modelViewer.alt = modelDropdown.options[modelDropdown.selectedIndex].text;
+                    modelViewer.autoRotate = true;
+                    modelViewer.cameraControls = true;
+                    modelViewerContainer.appendChild(modelViewer);
+                }
             }
         });
     </script>
