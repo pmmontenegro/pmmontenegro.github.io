@@ -80,8 +80,8 @@
             {
                 name: 'Antiparallel',
                 urls: [
-                    'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/4e09e9a634f2252706ea5a8fc374887132aa8228/helix_1.glb',
-                    'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/4e09e9a634f2252706ea5a8fc374887132aa8228/helix_2.glb'
+                    'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/5968c7f464a4e155e5dbcd1376458fb573756a96/helix_1.glb',
+                    'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/5968c7f464a4e155e5dbcd1376458fb573756a96/helix_2.glb'
                 ]
             }
         ];
@@ -116,7 +116,11 @@
                     modelViewer.style.position = "absolute";
                     modelViewer.style.width = "50%";
                     modelViewer.style.height = "100%";
-                    if (index === 1) modelViewer.style.left = "50%"; // Position second helix
+                    modelViewer.setAttribute("scale", "1 1 1"); // Uniform scale
+                    if (index === 1) {
+                        modelViewer.style.left = "50%"; // Position second helix
+                        modelViewer.setAttribute("rotation", "0 180 0"); // Flip the second helix
+                    }
                     modelViewerContainer.appendChild(modelViewer);
                 });
             } else if (selectedValue) {
@@ -126,6 +130,7 @@
                 modelViewer.alt = modelDropdown.options[modelDropdown.selectedIndex].text;
                 modelViewer.autoRotate = true;
                 modelViewer.cameraControls = true;
+                modelViewer.setAttribute("scale", "1 1 1"); // Ensure same scale
                 modelViewerContainer.appendChild(modelViewer);
             }
         });
