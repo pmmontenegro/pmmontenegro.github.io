@@ -43,7 +43,7 @@
         }
         #model-viewer-container {
             width: 100%;
-            height: calc(100vh - 200px); /* Adjusting height to fit the screen minus the header and dropdown */
+            height: calc(100vh - 200px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -55,7 +55,7 @@
             position: absolute;
         }
         #helix2 {
-            transform: rotateY(180deg); /* Pre-align one helix antiparallel */
+            left: 50%;
         }
     </style>
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
@@ -72,20 +72,11 @@
     </div>
 
     <script>
-        // List of models with their names and file URLs
+        // List of models
         const models = [
-            {
-                name: 'Cas9 (PDB 4OO8)',
-                url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/1f167dff65048529183cd5a014792d2f3f44ba09/4OO8.glb'
-            },
-            {
-                name: 'Central Dogma',
-                url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/304795ed1a66142934e0c2133a847aad5be979d8/central_dogma_project_-_example_model.glb'
-            },
-            {
-                name: 'Double Helix',
-                url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/186016534bbd55af8d8dacf2b05d458fa87caccb/1D28.glb'
-            },
+            { name: 'Cas9 (PDB 4OO8)', url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/1f167dff65048529183cd5a014792d2f3f44ba09/4OO8.glb' },
+            { name: 'Central Dogma', url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/304795ed1a66142934e0c2133a847aad5be979d8/central_dogma_project_-_example_model.glb' },
+            { name: 'Double Helix', url: 'https://raw.githubusercontent.com/pmmontenegro/pmmontenegro.github.io/186016534bbd55af8d8dacf2b05d458fa87caccb/1D28.glb' },
             {
                 name: 'Antiparallel',
                 urls: [
@@ -95,58 +86,47 @@
             }
         ];
 
-        // Get the dropdown and container elements
         const modelDropdown = document.getElementById('model-dropdown');
         const modelViewerContainer = document.getElementById('model-viewer-container');
 
-        // Populate the dropdown with models
+        // Populate dropdown
         models.forEach(model => {
             const option = document.createElement('option');
-            option.value = model.urls ? JSON.stringify(model.urls) : model.url;
+            option.value = model.urls ? "Antiparallel" : model.url;
             option.innerText = model.name;
             modelDropdown.appendChild(option);
         });
 
-        // Event listener for dropdown change
+        // Handle model selection
         modelDropdown.addEventListener('change', (event) => {
             const selectedValue = event.target.value;
-
-            // Clear existing model viewer elements
+            
+            // Clear previous models
             document.querySelectorAll('model-viewer').forEach(el => el.remove());
 
-            if (selectedValue) {
-                try {
-                    const urls = JSON.parse(selectedValue); // Try parsing multiple URLs
-                    if (Array.isArray(urls)) {
-                        // If "Antiparallel" is selected, add both helices
-                        urls.forEach((url, index) => {
-                            const modelViewer = document.createElement('model-viewer');
-                            modelViewer.src = url;
-                            modelViewer.alt = `Helix ${index + 1}`;
-                            modelViewer.autoRotate = true;
-                            modelViewer.cameraControls = true;
-                            modelViewer.id = index === 1 ? "helix2" : "helix1"; // Set ID to differentiate
-                            modelViewer.style.left = index === 1 ? "50%" : "0"; // Position helices side-by-side
-                            modelViewerContainer.appendChild(modelViewer);
-                        });
-                    } else {
-                        // If a single model is selected
-                        const modelViewer = document.createElement('model-viewer');
-                        modelViewer.src = selectedValue;
-                        modelViewer.alt = modelDropdown.options[modelDropdown.selectedIndex].text;
-                        modelViewer.autoRotate = true;
-                        modelViewer.cameraControls = true;
-                        modelViewerContainer.appendChild(modelViewer);
-                    }
-                } catch (e) {
-                    // If JSON parsing fails (i.e., for single models), just load one model
+            if (selectedValue === "Antiparallel") {
+                // Load both helices for the "Antiparallel" mode
+                const urls = models.find(m => m.name === "Antiparallel").urls;
+                urls.forEach((url, index) => {
                     const modelViewer = document.createElement('model-viewer');
-                    modelViewer.src = selectedValue;
-                    modelViewer.alt = modelDropdown.options[modelDropdown.selectedIndex].text;
+                    modelViewer.src = url;
+                    modelViewer.alt = `Helix ${index + 1}`;
                     modelViewer.autoRotate = true;
                     modelViewer.cameraControls = true;
+                    modelViewer.style.position = "absolute";
+                    modelViewer.style.width = "50%";
+                    modelViewer.style.height = "100%";
+                    if (index === 1) modelViewer.style.left = "50%"; // Position second helix
                     modelViewerContainer.appendChild(modelViewer);
-                }
+                });
+            } else if (selectedValue) {
+                // Load a single model
+                const modelViewer = document.createElement('model-viewer');
+                modelViewer.src = selectedValue;
+                modelViewer.alt = modelDropdown.options[modelDropdown.selectedIndex].text;
+                modelViewer.autoRotate = true;
+                modelViewer.cameraControls = true;
+                modelViewerContainer.appendChild(modelViewer);
             }
         });
     </script>
